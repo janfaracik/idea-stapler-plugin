@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 
 public class JenkinsCssLookup implements CssLookup {
 
-    private final static String STYLES_CSS = "io/jenkins/stapler/idea/jelly/css/styles.css";
+    private static final String STYLES_CSS = "io/jenkins/stapler/idea/jelly/css/styles.css";
 
     /** Adds the core Jenkins classes if the project is a plugin */
     @Override
@@ -35,9 +35,7 @@ public class JenkinsCssLookup implements CssLookup {
     public Set<String> extractClassesFromStyles() {
         Set<String> classes = new HashSet<>();
 
-        try (InputStream inputStream = getClass()
-                        .getClassLoader()
-                        .getResourceAsStream(STYLES_CSS);
+        try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream(STYLES_CSS);
                 BufferedReader reader =
                         new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
 
