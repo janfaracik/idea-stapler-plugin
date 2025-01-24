@@ -1,5 +1,6 @@
 package io.jenkins.stapler.idea.jelly.css;
 
+import static io.jenkins.stapler.idea.jelly.css.Utils.parseCss;
 import static org.kohsuke.stapler.idea.MavenProjectHelper.getArtifactId;
 
 import com.intellij.openapi.project.Project;
@@ -12,8 +13,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class JenkinsCssLookup implements CssLookup {
@@ -28,12 +27,12 @@ public class JenkinsCssLookup implements CssLookup {
         }
 
         return extractClassesFromStyles().stream()
-                .map(e -> new Symbol(e, e, "jenkins"))
+                .map(e -> new Symbol(e.className(), e.className(), "jenkins"))
                 .collect(Collectors.toSet());
     }
 
-    public Set<String> extractClassesFromStyles() {
-        Set<String> classes = new HashSet<>();
+    private Set<Utils.Thingy> extractClassesFromStyles() {
+        Set<Utils.Thingy> classes = new HashSet<>();
 
         try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream(STYLES_CSS);
                 BufferedReader reader =
@@ -45,16 +44,7 @@ public class JenkinsCssLookup implements CssLookup {
                 fileContent.append(line).append("\n");
             }
 
-            Pattern classPattern = Pattern.compile("\\.(\\w[\\w-]*)\\s*\\{"); // Matches `.classname {`
-            Matcher matcher = classPattern.matcher(fileContent.toString());
-
-            while (matcher.find()) {
-                String className = matcher.group(1);
-                if (className.startsWith("jenkins-")) {
-                    classes.add(matcher.group(1));
-                }
-            }
-
+            return parseCss(fileContent.toString());
         } catch (IOException e) {
             e.printStackTrace();
         }

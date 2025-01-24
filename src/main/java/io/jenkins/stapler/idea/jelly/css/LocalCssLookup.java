@@ -1,5 +1,6 @@
 package io.jenkins.stapler.idea.jelly.css;
 
+import static io.jenkins.stapler.idea.jelly.css.Utils.parseCss;
 import static org.kohsuke.stapler.idea.MavenProjectHelper.getArtifactId;
 
 import com.intellij.openapi.fileTypes.FileType;
@@ -15,8 +16,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class LocalCssLookup implements CssLookup {
 
@@ -62,14 +62,9 @@ public class LocalCssLookup implements CssLookup {
         try {
             String fileContent = new String(file.contentsToByteArray(), StandardCharsets.UTF_8);
 
-            // Regex for top-level CSS classes (match classes not inside curly braces)
-            Pattern topLevelClassPattern = Pattern.compile("^\\s*\\.(\\w[\\w-]*)\\s*\\{", Pattern.MULTILINE);
-            Matcher matcher = topLevelClassPattern.matcher(fileContent);
-
-            while (matcher.find()) {
-                response.add(
-                        new Symbol(matcher.group(1), matcher.group(1), null));
-            }
+            response.addAll(parseCss(fileContent).stream()
+                .map(e -> new Symbol(e.className(), e.className(), null))
+                .collect(Collectors.toSet()));
         } catch (IOException e) {
             System.err.println("Error reading file: " + file.getPath() + " - " + e.getMessage());
         }
