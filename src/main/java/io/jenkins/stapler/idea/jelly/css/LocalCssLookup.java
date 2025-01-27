@@ -47,7 +47,7 @@ public class LocalCssLookup implements CssLookup {
 
         processFile(stylesheet, response);
 
-        return response;
+        return response.stream().filter(e -> e.name().startsWith("jenkins-")).collect(Collectors.toSet());
     }
 
     /** If the project is a plugin, index and process stylesheets dynamically */
@@ -70,7 +70,7 @@ public class LocalCssLookup implements CssLookup {
                 },
                 GlobalSearchScope.everythingScope(project));
 
-        return response;
+        return response.stream().filter(e -> !e.name().startsWith("jenkins-")).collect(Collectors.toSet());
     }
 
     private void processFile(VirtualFile file, Set<ClassName> response) {

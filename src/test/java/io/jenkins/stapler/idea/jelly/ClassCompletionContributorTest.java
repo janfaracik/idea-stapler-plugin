@@ -13,7 +13,7 @@ public class ClassCompletionContributorTest extends BasePlatformTestCase {
                     <div class="<caret>
                 </j:jelly>
                 """,
-                781);
+                303);
     }
 
     private void assertDefaultTagLibrary(String body, int amount) {
