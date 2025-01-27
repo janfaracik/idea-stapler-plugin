@@ -32,14 +32,14 @@ public class LocalCssLookup implements CssLookup {
     /** Retrieves class names from the generated {@code styles.css} in Jenkins Core */
     private Set<ClassName> retrieveJenkinsCoreClassNames(Project project) {
         Set<ClassName> response = new HashSet<>();
-
         String basePath = project.getBasePath();
+
         if (basePath == null) {
             return response;
         }
 
         VirtualFile stylesheet =
-                LocalFileSystem.getInstance().findFileByPath(basePath + "war/src/main/webapp/jsbundles/styles.css");
+                LocalFileSystem.getInstance().findFileByPath(basePath + "/war/src/main/webapp/jsbundles/styles.css");
 
         if (stylesheet == null) {
             return response;
@@ -47,7 +47,7 @@ public class LocalCssLookup implements CssLookup {
 
         processFile(stylesheet, response);
 
-        return response.stream().filter(e -> e.name().startsWith("jenkins-")).collect(Collectors.toSet());
+        return response;
     }
 
     /** If the project is a plugin, index and process stylesheets dynamically */
