@@ -5,10 +5,10 @@ import static org.junit.Assert.assertEquals;
 import java.util.Set;
 import org.junit.Test;
 
-public class UtilsTest {
+public class CssParserTest {
 
     @Test
-    public void testParseCss() {
+    public void testGetClassNames() {
         String input =
                 """
             .jenkins-app-bar {
@@ -30,11 +30,11 @@ public class UtilsTest {
 
         assertEquals(
                 Set.of("jenkins-app-bar", "jenkins-!-margin-0", "jenkins-should-show", "jenkins-should-also-show"),
-                Utils.parseCss(input));
+                CssParser.getClassNames(input));
     }
 
     @Test
-    public void testParseCss_noSpaces() {
+    public void testGetClassNames_noSpaces() {
         String input =
                 """
             .jenkins-app-bar {
@@ -52,6 +52,6 @@ public class UtilsTest {
 
         assertEquals(
                 Set.of("jenkins-app-bar", "jenkins-!-margin-0", "jenkins-should-show", "jenkins-should-also-show"),
-                Utils.parseCss(input));
+                CssParser.getClassNames(input));
     }
 }

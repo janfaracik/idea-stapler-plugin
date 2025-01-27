@@ -14,8 +14,8 @@ import com.intellij.patterns.XmlPatterns;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.xml.XmlElementType;
 import com.intellij.util.ProcessingContext;
+import io.jenkins.stapler.idea.jelly.css.ClassName;
 import io.jenkins.stapler.idea.jelly.css.CssFinder;
-import io.jenkins.stapler.idea.jelly.symbols.Symbol;
 import org.jetbrains.annotations.NotNull;
 
 /** Provides code completions for Jelly class attributes, supported attributes are "class", "classes", and "clazz". */
@@ -44,9 +44,10 @@ public class ClassCompletionContributor extends CompletionContributor {
                         String prefix = prefixes[prefixes.length - 1];
                         resultSet = resultSet.withPrefixMatcher(prefix);
 
-                        for (Symbol cls : CssFinder.getInstance(project).getAvailableClasses()) {
-                            LookupElementBuilder element = LookupElementBuilder.create(cls.name())
-                                    .withTypeText(cls.group())
+                        for (ClassName className :
+                                CssFinder.getInstance(project).getAvailableClasses()) {
+                            LookupElementBuilder element = LookupElementBuilder.create(className.name())
+                                    .withTypeText(className.type())
                                     .withIcon(AllIcons.Nodes.Class);
                             resultSet.addElement(element);
                         }

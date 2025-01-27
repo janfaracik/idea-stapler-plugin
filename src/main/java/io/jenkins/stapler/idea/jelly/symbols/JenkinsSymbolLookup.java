@@ -1,10 +1,9 @@
 package io.jenkins.stapler.idea.jelly.symbols;
 
-import static org.kohsuke.stapler.idea.MavenProjectHelper.getArtifactId;
+import static org.kohsuke.stapler.idea.MavenProjectHelper.isJenkinsCore;
 
 import com.intellij.openapi.project.Project;
 import java.util.HashSet;
-import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -15,7 +14,7 @@ public class JenkinsSymbolLookup implements SymbolLookup {
     /** Adds the core Jenkins symbols if the project is a plugin */
     @Override
     public Set<Symbol> getSymbols(Project project) {
-        if (Objects.equals(getArtifactId(project), "jenkins-parent")) {
+        if (isJenkinsCore(project)) {
             return Set.of();
         }
 

@@ -3,6 +3,7 @@ package org.kohsuke.stapler.idea;
 import com.intellij.openapi.project.Project;
 import java.io.File;
 import java.io.IOException;
+import java.util.Objects;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -52,6 +53,10 @@ public class MavenProjectHelper {
             e.printStackTrace();
             return null;
         }
+    }
+
+    public static boolean isJenkinsCore(Project project) {
+        return Objects.equals(getArtifactId(project), "jenkins-parent");
     }
 
     public static boolean hasDependency(Project project, String groupId, String artifactId) {

@@ -5,15 +5,15 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class Utils {
+public class CssParser {
 
     private static final Pattern PATTERN = Pattern.compile("(?<=\\.)[a-zA-Z0-9_-]+(?:\\\\ [^{}]+)?");
 
     /**
      * @param css the body of text to parse
-     * @return retrieves all classnames in the given CSS body
+     * @return retrieves all class names in the given CSS body
      */
-    public static Set<String> parseCss(String css) {
+    public static Set<String> getClassNames(String css) {
         Set<String> response = new HashSet<>();
         Matcher matcher = PATTERN.matcher(css);
 

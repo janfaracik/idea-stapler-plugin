@@ -1,10 +1,9 @@
 package io.jenkins.stapler.idea.jelly.css;
 
-import static io.jenkins.stapler.idea.jelly.css.Utils.parseCss;
-import static org.kohsuke.stapler.idea.MavenProjectHelper.getArtifactId;
+import static io.jenkins.stapler.idea.jelly.css.CssParser.getClassNames;
+import static org.kohsuke.stapler.idea.MavenProjectHelper.isJenkinsCore;
 
 import com.intellij.openapi.project.Project;
-import io.jenkins.stapler.idea.jelly.symbols.Symbol;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -21,13 +20,13 @@ public class JenkinsCssLookup implements CssLookup {
 
     /** Adds the core Jenkins classes if the project is a plugin */
     @Override
-    public Set<Symbol> getClasses(Project project) {
-        if (Objects.equals(getArtifactId(project), "jenkins-parent")) {
+    public Set<ClassName> getClasses(Project project) {
+        if (isJenkinsCore(project)) {
             return Set.of();
         }
 
         return extractClassesFromStyles().stream()
-                .map(e -> new Symbol(e, e, "jenkins"))
+                .map(e -> new ClassName(e, "jenkins"))
                 .collect(Collectors.toSet());
     }
 
@@ -35,8 +34,8 @@ public class JenkinsCssLookup implements CssLookup {
         Set<String> classes = new HashSet<>();
 
         try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream(STYLES_CSS);
-                BufferedReader reader =
-                        new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
+                BufferedReader reader = new BufferedReader(
+                        new InputStreamReader(Objects.requireNonNull(inputStream), StandardCharsets.UTF_8))) {
 
             StringBuilder fileContent = new StringBuilder();
             String line;
@@ -44,7 +43,7 @@ public class JenkinsCssLookup implements CssLookup {
                 fileContent.append(line).append("\n");
             }
 
-            return parseCss(fileContent.toString());
+            return getClassNames(fileContent.toString());
         } catch (IOException e) {
             e.printStackTrace();
         }

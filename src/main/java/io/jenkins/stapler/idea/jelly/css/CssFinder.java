@@ -6,7 +6,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.AsyncFileListener;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.openapi.vfs.newvfs.events.VFileEvent;
-import io.jenkins.stapler.idea.jelly.symbols.Symbol;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -18,7 +17,7 @@ public final class CssFinder implements Disposable {
 
     private final Project project;
 
-    private Set<Symbol> ICONS_CACHE = null;
+    private Set<ClassName> CACHE = null;
 
     private final List<CssLookup> CSS_LOOKUPS = List.of(new LocalCssLookup(), new JenkinsCssLookup());
 
@@ -54,18 +53,18 @@ public final class CssFinder implements Disposable {
         return project.getService(CssFinder.class);
     }
 
-    public Set<Symbol> getAvailableClasses() {
-        if (ICONS_CACHE == null) {
-            ICONS_CACHE = computeSymbols();
+    public Set<ClassName> getAvailableClasses() {
+        if (CACHE == null) {
+            CACHE = compute();
         }
-        return ICONS_CACHE;
+        return CACHE;
     }
 
     public void invalidateCache() {
-        ICONS_CACHE = null;
+        CACHE = null;
     }
 
-    private Set<Symbol> computeSymbols() {
+    private Set<ClassName> compute() {
         return CSS_LOOKUPS.stream()
                 .flatMap(finder -> finder.getClasses(project).stream())
                 .collect(Collectors.toSet());
