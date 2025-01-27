@@ -63,8 +63,8 @@ public class LocalCssLookup implements CssLookup {
             String fileContent = new String(file.contentsToByteArray(), StandardCharsets.UTF_8);
 
             response.addAll(parseCss(fileContent).stream()
-                .map(e -> new Symbol(e.className(), e.className(), null))
-                .collect(Collectors.toSet()));
+                    .map(e -> new Symbol(e, e, null))
+                    .collect(Collectors.toSet()));
         } catch (IOException e) {
             System.err.println("Error reading file: " + file.getPath() + " - " + e.getMessage());
         }

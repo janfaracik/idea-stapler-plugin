@@ -1,37 +1,57 @@
 package io.jenkins.stapler.idea.jelly.css;
 
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
 
 import java.util.Set;
-
-import static org.junit.Assert.assertEquals;
+import org.junit.Test;
 
 public class UtilsTest {
 
     @Test
     public void testParseCss() {
-        String input = """
+        String input =
+                """
             .jenkins-app-bar {
                 background: red;
             }
-            
+
             .jenkins-\\ !-margin-0 {
                 margin: 0;
             }
-            
+
             .jenkins-should-show {
                 background: green;
 
-                .jenkins-should-not-show {
+                .jenkins-should-also-show {
                     background: orange;
                 }
             }
             """;
 
-        assertEquals(Set.of(
-            new Utils.Thingy("jenkins-app-bar", null),
-            new Utils.Thingy("jenkins-!-margin-0", "margin: 0;"),
-            new Utils.Thingy("jenkins-should-show", null)
-        ), Utils.parseCss(input));
+        assertEquals(
+                Set.of("jenkins-app-bar", "jenkins-!-margin-0", "jenkins-should-show", "jenkins-should-also-show"),
+                Utils.parseCss(input));
+    }
+
+    @Test
+    public void testParseCss_noSpaces() {
+        String input =
+                """
+            .jenkins-app-bar {
+                background: red;
+            }.jenkins-\\ !-margin-0 {
+                margin: 0;
+            }.jenkins-should-show {
+                background: green;
+
+                .jenkins-should-also-show {
+                    background: orange;
+                }
+            }
+            """;
+
+        assertEquals(
+                Set.of("jenkins-app-bar", "jenkins-!-margin-0", "jenkins-should-show", "jenkins-should-also-show"),
+                Utils.parseCss(input));
     }
 }

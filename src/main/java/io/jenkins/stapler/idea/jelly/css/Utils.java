@@ -7,31 +7,25 @@ import java.util.regex.Pattern;
 
 public class Utils {
 
-    public static Set<Thingy> parseCss(String css) {
-        Set<Thingy> response = new HashSet<>();
+    private static final Pattern PATTERN = Pattern.compile("(?<=\\.)[a-zA-Z0-9_-]+(?:\\\\ [^{}]+)?");
 
-        // Match top-level class definitions and their content
-        Pattern classPattern = Pattern.compile("^\\s*\\.((?:\\\\.|[\\w!\\-])+)[^{]*\\{([^}]*)\\}", Pattern.MULTILINE);
-        Matcher matcher = classPattern.matcher(css);
+    /**
+     * @param css the body of text to parse
+     * @return retrieves all classnames in the given CSS body
+     */
+    public static Set<String> parseCss(String css) {
+        Set<String> response = new HashSet<>();
+        Matcher matcher = PATTERN.matcher(css);
 
         while (matcher.find()) {
-            String className = matcher.group(1);
+            String className = matcher.group();
 
-            // Replace escaped backslashes (\ ) with nothing
-            className = className.replace("\\ ", "");
+            // Replace escaped backslashes (\ ) with nothing and trim
+            className = className.replace("\\ ", "").trim();
 
-            // Extract content inside the class
-            String classContent = matcher.group(2).trim();
-
-            if (!className.contains("-!-")) {
-                classContent = null;
-            }
-
-            response.add(new Thingy(className, classContent));
+            response.add(className);
         }
 
         return response;
     }
-
-    public record Thingy(String className, String helpDocs) {}
 }

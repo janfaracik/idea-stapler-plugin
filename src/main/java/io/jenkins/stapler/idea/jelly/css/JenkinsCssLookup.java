@@ -27,12 +27,12 @@ public class JenkinsCssLookup implements CssLookup {
         }
 
         return extractClassesFromStyles().stream()
-                .map(e -> new Symbol(e.className(), e.className(), "jenkins"))
+                .map(e -> new Symbol(e, e, "jenkins"))
                 .collect(Collectors.toSet());
     }
 
-    private Set<Utils.Thingy> extractClassesFromStyles() {
-        Set<Utils.Thingy> classes = new HashSet<>();
+    private Set<String> extractClassesFromStyles() {
+        Set<String> classes = new HashSet<>();
 
         try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream(STYLES_CSS);
                 BufferedReader reader =
